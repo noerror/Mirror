@@ -385,7 +385,6 @@ namespace Mirror.Weaver
 
         static MethodDefinition GenerateListWriteFunc(TypeReference variable, int recursionCount)
         {
-            // TODO update this method for List (copied from ArraySegment atm)
             GenericInstanceType genericInstance = (GenericInstanceType)variable;
             TypeReference elementType = genericInstance.GenericArguments[0];
             MethodReference elementWriteFunc = GetWriteFunc(elementType, recursionCount + 1);
@@ -395,7 +394,7 @@ namespace Mirror.Weaver
                 return null;
             }
 
-            string functionName = "_WriteArraySegment_" + elementType.Name + "_";
+            string functionName = "_WriteList_" + elementType.Name + "_";
             if (variable.DeclaringType != null)
             {
                 functionName += variable.DeclaringType.Name;
@@ -421,7 +420,7 @@ namespace Mirror.Weaver
 
             ILProcessor worker = writerFunc.Body.GetILProcessor();
 
-            MethodReference countref = Weaver.ArraySegmentCountReference.MakeHostInstanceGeneric(genericInstance);
+            MethodReference countref = Weaver.ListCountReference.MakeHostInstanceGeneric(genericInstance);
 
             // int length = value.Count;
             worker.Append(worker.Create(OpCodes.Ldarga_S, (byte)1));
@@ -434,6 +433,7 @@ namespace Mirror.Weaver
             worker.Append(worker.Create(OpCodes.Ldloc_0));
             worker.Append(worker.Create(OpCodes.Call, GetWriteFunc(Weaver.int32Type)));
 
+            // TODO update this method for List (copied from ArraySegment atm)
             // Loop through the ArraySegment<T> and call the writer for each element.
             // generates this:
             // for (int i=0; i< length; i++)

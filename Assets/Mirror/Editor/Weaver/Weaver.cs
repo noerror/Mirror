@@ -101,6 +101,11 @@ namespace Mirror.Weaver
         public static MethodReference ArraySegmentOffsetReference;
         public static MethodReference ArraySegmentCountReference;
 
+        // list
+        public static TypeReference ListType;
+        public static MethodReference ListConstructorReference;
+        public static MethodReference ListCountReference;
+
         // system types
         public static TypeReference voidType;
         public static TypeReference singleType;
@@ -265,6 +270,10 @@ namespace Mirror.Weaver
             ArraySegmentCountReference = Resolvers.ResolveProperty(ArraySegmentType, CurrentAssembly, "Count");
             ArraySegmentOffsetReference = Resolvers.ResolveProperty(ArraySegmentType, CurrentAssembly, "Offset");
             ArraySegmentConstructorReference = Resolvers.ResolveMethod(ArraySegmentType, CurrentAssembly, ".ctor");
+
+            ListType = ImportCorLibType("System.List`1");
+            ListCountReference = Resolvers.ResolveProperty(ListType, CurrentAssembly, "Count");
+            ListConstructorReference = Resolvers.ResolveMethod(ListType, CurrentAssembly, ".ctor");
 
             NetworkReaderType = NetAssembly.MainModule.GetType("Mirror.NetworkReader");
             NetworkWriterType = NetAssembly.MainModule.GetType("Mirror.NetworkWriter");
