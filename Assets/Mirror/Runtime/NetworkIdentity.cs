@@ -54,6 +54,8 @@ namespace Mirror
         // configuration
         NetworkBehaviour[] networkBehavioursCache;
 
+        private bool _isClient;
+
         /// <summary>
         /// Returns true if running as a client and this object was spawned by a server.
         /// </summary>
@@ -63,8 +65,20 @@ namespace Mirror
         // but we need it in OnDestroy, e.g. when saving skillbars on quit. this
         // works fine if we keep the UNET way of setting isClient manually.
         // => fixes https://github.com/vis2k/Mirror/issues/1475
-        public bool isClient { get; internal set; }
+        public bool isClient
+        {
+            get => _isClient;
+            internal set
+            {
+                _isClient = value;
+                foreach (NetworkBehaviour behaviour in NetworkBehaviours)
+                {
+                    behaviour.isClient = value;
+                }
+            }
+        }
 
+        private bool _isServer;
         /// <summary>
         /// Returns true if NetworkServer.active and server is not stopped.
         /// </summary>
@@ -74,7 +88,19 @@ namespace Mirror
         // but we need it in OnDestroy, e.g. when saving players on quit. this
         // works fine if we keep the UNET way of setting isServer manually.
         // => fixes https://github.com/vis2k/Mirror/issues/1484
-        public bool isServer { get; internal set; }
+
+        public bool isServer
+        {
+            get => _isServer;
+            internal set
+            {
+                _isServer = value;
+                foreach (NetworkBehaviour behaviour in NetworkBehaviours)
+                {
+                    behaviour.isServer = value;
+                }
+            }
+        }
 
         /// <summary>
         /// This returns true if this object is the one that represents the player on the local machine.
